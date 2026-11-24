@@ -49,6 +49,31 @@ Point the virtual host document root at the project root, enable PHP and `mod_re
 
 The application returns a generic unavailable response when MySQL cannot be reached and writes diagnostic details to the PHP error log. Check `/api/health` and the hosting logs when diagnosing a database connection issue.
 
+## Temporary Render deployment
+
+The included `Dockerfile` packages the PHP app for a Render Docker Web Service. For a database-backed deployment:
+
+1. Push this project to a private GitHub repository. Do not commit `.env`; `.gitignore` excludes it. Review the files you are pushing first.
+2. In Render, create a **private MySQL service** using Render's [MySQL guide](https://render.com/docs/deploy-mysql). Set the database name and a dedicated app username/password, then attach a persistent disk at `/var/lib/mysql`. Keep the credentials private.
+3. In Render, create a **Web Service** from the GitHub repository, select **Docker**, and use the repository root as the Docker build context. The included image listens on port `10000`; set the service's port to `10000` if Render asks.
+4. Add these environment variables to the web service using the MySQL service's internal connection details:
+   - `DB_HOST`: MySQL private hostname (not a URL)
+   - `DB_PORT`: `3306`
+   - `DB_DATABASE`: `neco_futsal`
+   - `DB_USERNAME`: the app's MySQL username
+   - `DB_PASSWORD`: the app user's password
+5. Deploy the web service. In its **Shell**, import the schema using the MySQL client included in the Docker image:
+
+   ```sh
+   mysql --host="$DB_HOST" --port="${DB_PORT:-3306}" --user="$DB_USERNAME" --password < database/schema.sql
+   ```
+
+   Enter `DB_PASSWORD` when prompted. The schema creates and selects `neco_futsal`.
+6. Set the Render health check path to `/api/health`, then deploy again if needed. Create the first Super Admin from the web service Shell: set a temporary, strong `ADMIN_PASSWORD` environment variable in the Render dashboard, then run `php bin/create-admin.php "Tournament Administrator" you@example.com`. Remove `ADMIN_PASSWORD` from the service environment after creating the account.
+7. If you need admin image uploads, attach a persistent disk mounted at `/var/www/html/uploads`. Without it, uploaded images can be lost when the service is redeployed or restarted.
+
+Render's MySQL service and persistent disks may incur charges; review current plan pricing before deploying. Avoid using the MySQL root account for the app. A Render deployment has its own database and does not automatically include your local records or uploaded images.
+
 ## Data notes
 
 The MySQL schema is in `database/schema.sql`. It creates the application tables and foreign keys but does not migrate existing MongoDB documents. Export and map existing records before importing them into MySQL. Keep the old MongoDB credentials in `server/.env` out of source control; the PHP application does not read that file.
