@@ -12,8 +12,7 @@ function public_header(?array $tournament, string $page): void
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="/">
-          <span class="brand-symbol">N<span>.</span></span>
-          <span class="brand-copy"><b>NECO INSURANCE</b><small>FUTSAL CUP</small></span>
+          <img class="brand-logo" src="/client/assets/neco_logo.png" alt="Neco Insurance Limited">
         </a>
         <nav class="main-nav" aria-label="Main navigation">
           <?php foreach ($navigation as $path => $label): ?>
@@ -46,7 +45,6 @@ function public_footer(array $sponsors): void
         </div>
       </div>
       <div class="footer-bottom">
-        <a class="brand" href="/"><span class="brand-symbol">N<span>.</span></span><span class="brand-copy"><b>NECO INSURANCE</b><small>FUTSAL CUP</small></span></a>
         <p>Every match. Every moment. <span>© <?= date('Y') ?> Neco Insurance Limited.</span></p>
         <div class="footer-links"><a href="/sponsors">Partners</a><a href="/admin">Admin portal</a><a href="https://necoinsurance.com" target="_blank" rel="noreferrer">Company</a></div>
       </div>
@@ -120,26 +118,30 @@ function render_public_page(string $page, array $data): void
         return;
     }
     if ($page === '/') {
-        $nameParts = preg_split('/\s+/', $tournament['name'] ?? 'Neco Insurance Futsal Cup') ?: [];
-        $first = array_shift($nameParts) ?: 'Neco';
-        $rest = implode(' ', $nameParts) ?: 'Futsal Cup';
         $upcoming = array_slice(array_values(array_filter($matches, static fn(array $m): bool =>
             in_array($m['status'], ['scheduled'], true) && $m['result_status'] !== 'published'
         )), 0, 2);
         $recent = array_slice(array_values(array_filter($matches, static fn(array $m): bool =>
             $m['result_status'] === 'published'
         )), 0, 3);
-        $gamesPlayed = (int)($data['stats']['matchesPlayed'] ?? 0);
         ?>
-        <section class="hero"><div class="hero-grid"><div class="hero-copy">
-          <div class="hero-overline"><span class="pulse-dot"></span><?= e($tournament['status'] ?? 'Upcoming') ?> <span class="overline-divider">/</span> NECO INSURANCE LIMITED</div>
-          <h1><?= e($first) ?><br><span><?= e($rest) ?></span><i>.</i></h1>
-          <p class="hero-description"><?= e($tournament['description'] ?? 'A celebration of teamwork, talent and the beautiful game. Follow all the action from the Neco Insurance futsal tournament.') ?></p>
-          <div class="hero-actions"><a class="button button-coral" href="/fixtures">Explore fixtures <span>→</span></a><a class="text-link" href="/standings">View standings ↓</a></div>
-          <div class="hero-note"><span class="note-line"></span><?= e($tournament['venue'] ?? 'One tournament. One champion.') ?></div>
-        </div><div class="hero-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-number">01</div><div class="art-swoosh"></div><div class="art-ball"><span></span><i></i><b></b></div><div class="art-caption"><span>THE BEAUTIFUL GAME</span><span>EST. NECO INSURANCE</span></div><div class="art-stamp"><span>PLAY<br>WITH<br>PURPOSE</span></div></div></div>
-          <div class="hero-bottom"><div class="hero-tournament"><span class="eyebrow">THE TOURNAMENT</span><b><?= e($tournament['edition'] ?? ($tournament['start_date'] ? date('Y', strtotime($tournament['start_date'])) : 'SEASON 01')) ?></b></div>
-            <div class="hero-stats"><div><strong><?= count($data['teams']) ?></strong><span>TEAMS</span></div><div><strong><?= $gamesPlayed ?><small>/<?= count($matches) ?></small></strong><span>MATCHES PLAYED</span></div><div><strong><?= (int)($data['stats']['goalsScored'] ?? 0) ?></strong><span>GOALS SCORED</span></div></div><span class="hero-scroll">SCROLL TO EXPLORE ↓</span></div>
+        <section class="tournament-banner" data-banner-slider aria-label="Tournament banners" aria-roledescription="carousel">
+          <div class="banner-track" data-banner-track>
+            <div class="banner-slide" role="group" aria-roledescription="slide" aria-label="1 of 2">
+              <img src="/client/assets/banner1.png" alt="Neco Insurance Futsal Cup tournament banner" fetchpriority="high">
+            </div>
+            <div class="banner-slide" role="group" aria-roledescription="slide" aria-label="2 of 2" aria-hidden="true">
+              <img src="/client/assets/banner2.png" alt="Participating banks in the Neco Insurance Futsal Cup">
+            </div>
+          </div>
+          <div class="banner-controls" aria-label="Banner controls">
+            <button type="button" class="banner-arrow" data-banner-previous aria-label="Previous banner">‹</button>
+            <div class="banner-pagination">
+              <button type="button" class="banner-dot" data-banner-to="0" aria-label="Show banner 1" aria-current="true"></button>
+              <button type="button" class="banner-dot" data-banner-to="1" aria-label="Show banner 2" aria-current="false"></button>
+            </div>
+            <button type="button" class="banner-arrow" data-banner-next aria-label="Next banner">›</button>
+          </div>
         </section>
         <main class="page-main">
           <section class="section-block"><div class="section-heading"><div><span class="eyebrow">THE NEXT 90</span><h2>Up next<span class="heading-period">.</span></h2></div><a class="arrow-link" href="/fixtures">Full fixture list →</a></div>

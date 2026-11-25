@@ -21,13 +21,13 @@ function render_admin(PDO $pdo, array $user, ?array $notice, string $error = '')
     ?>
     <main class="admin-shell">
       <aside class="admin-sidebar">
-          <a class="brand" href="/"><span class="brand-symbol">N<span>.</span></span><span class="brand-copy"><b>NECO INSURANCE</b><small>ADMIN PORTAL</small></span></a>
+          <a class="brand" href="/"><img class="brand-logo" src="/client/assets/neco_logo.png" alt="Neco Insurance Limited"></a>
           <div class="admin-sidebar-label">TOURNAMENT MANAGEMENT</div>
           <nav aria-label="Admin navigation">
             <?php foreach ($sections as $key => $label): ?><a class="admin-sidebar-item <?= $section === $key ? 'admin-sidebar-active' : '' ?>" href="/admin?section=<?= e($key) ?>"><?= e($label) ?></a><?php endforeach; ?>
           </nav>
           <a href="/">View public tournament</a>
-          <div class="admin-sidebar-bottom"><span class="admin-user-icon"><?= e(strtoupper(substr($user['name'], 0, 1))) ?></span><div><b><?= e($user['name']) ?></b><small><?= e($user['role']) ?></small></div><form method="post" action="/admin"><input type="hidden" name="action" value="logout"><?= csrf_field() ?><button aria-label="Sign out">↗</button></form></div>
+          <div class="admin-sidebar-bottom"><span class="admin-user-icon"><?= e(strtoupper(substr($user['name'], 0, 1))) ?></span><div><b><?= e($user['name']) ?></b><small><?= e($user['role']) ?></small></div><form method="post" action="/admin"><input type="hidden" name="action" value="logout"><?= csrf_field() ?><button type="submit">Logout</button></form></div>
       </aside>
       <section class="admin-workspace">
           <?php if ($notice): ?><div class="auth-toast auth-toast-<?= e($notice['type'] ?? 'success') ?>" role="status"><?= e($notice['message'] ?? '') ?></div><?php endif; ?>
@@ -232,7 +232,7 @@ function render_login(?array $notice, string $error = ''): void
       <a class="back-link" href="/">← Back to tournament</a>
       <?php if ($notice): ?><div class="auth-toast auth-toast-<?= e($notice['type'] ?? 'success') ?>"><?= e($notice['message'] ?? '') ?></div><?php endif; ?>
       <?php if ($error): ?><div class="auth-toast auth-toast-error" role="alert"><?= e($error) ?></div><?php endif; ?>
-      <section class="admin-login-card"><a class="brand" href="/"><span class="brand-symbol">N<span>.</span></span><span class="brand-copy"><b>NECO INSURANCE</b><small>FUTSAL CUP</small></span></a>
+      <section class="admin-login-card"><a class="brand" href="/"><img class="brand-logo" src="/client/assets/neco_logo.png" alt="Neco Insurance Limited"></a>
         <span class="eyebrow">SECURE ADMIN PORTAL</span><h1>Welcome<br>back<span>.</span></h1><p>Sign in to manage tournament content and results.</p>
         <form method="post" action="/admin"><input type="hidden" name="action" value="login"><?= csrf_field() ?>
           <label>Email address<input name="email" type="email" autocomplete="username" required></label>

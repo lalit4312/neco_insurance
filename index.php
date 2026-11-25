@@ -162,6 +162,7 @@ function render_document(string $title, callable $content, bool $public, array $
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
       <link rel="stylesheet" href="/client/src/styles.css">
+      <?php if ($public): ?><script src="/client/src/banner.js" defer></script><?php endif; ?>
     </head>
     <body>
       <?php $content(); ?>

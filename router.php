@@ -2,7 +2,13 @@
 declare(strict_types=1);
 
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-$staticFile = $path === '/client/src/styles.css'
+$staticFile = in_array($path, [
+    '/client/src/styles.css',
+    '/client/src/banner.js',
+    '/client/assets/banner1.png',
+    '/client/assets/banner2.png',
+    '/client/assets/neco_logo.png',
+], true)
     || preg_match('#^/uploads/[a-f0-9]{40}\.(?:jpg|png|webp|gif)$#', $path) === 1;
 if ($staticFile) {
     $file = realpath(__DIR__ . $path);
